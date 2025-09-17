@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bamp's Toy Vault - Coming Soon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700&family=Short+Stack&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background-color: #E4FFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #52AF45;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            animation: fadeIn 1s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo {
+            margin-bottom: 40px;
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+        
+        h1 {
+            font-family: 'Josefin Slab', serif;
+            font-size: 2.5rem;
+            color: #52AF45;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        
+        .email-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .form-label {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-size: 1.1rem;
+            color: #52AF45;
+            margin-bottom: 15px;
+            display: block;
+            font-weight: 700;
+        }
+        
+        .email-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #50A7DD;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            transition: border-color 0.3s;
+            color: #52AF45;
+        }
+        
+        .email-input::placeholder {
+            color: #9ecba4;
+        }
+        
+        .email-input:focus {
+            outline: none;
+            border-color: #F4B925;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background-color: #E84646;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+        }
+        
+        .submit-btn:hover {
+            background-color: #ED701D;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(237, 112, 29, 0.3);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .success-message {
+            display: none;
+            color: #52AF45;
+            font-weight: 700;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                max-width: 300px;
+            }
+            
+            .email-form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Logo Image -->
+        <img src="logo-bamps.svg" alt="Bamp's Toy Vault" class="logo">
+        
+        <h1>Coming soon to Downtown Plymouth!</h1>
+        
+        <p style="font-family: 'M PLUS Rounded 1c', sans-serif; color: #7951AD; text-align: center; font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            Something wonderful is coming soon. Stay tuned for behind-the-scenes peeks as the most imaginative and exciting new toy store comes to life—explore the design process, discover playful new toys and games, get early glimpses of our grand opening displays, and much more.
+        </p>
+        
+        <div class="email-form">
+            <form id="notify-form">
+                <label class="form-label" for="email">Notify me with updates</label>
+                <input type="email" id="email" class="email-input" placeholder="Enter your email" required>
+                <button type="submit" class="submit-btn">Submit</button>
+                <div class="success-message" id="success-message">Thank you! We'll keep you updated.</div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Form handling with PHP backend
+        document.getElementById('notify-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const successMsg = document.getElementById('success-message');
+            const submitBtn = document.querySelector('.submit-btn');
+            
+            // Disable button during submission
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            try {
+                // Send to PHP backend - CORRECTED FILENAME
+                const response = await fetch('email-handler-php.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show success message
+                    successMsg.style.display = 'block';
+                    successMsg.textContent = data.message || 'Thank you! We\'ll keep you updated.';
+                    
+                    // Clear the form
+                    document.getElementById('email').value = '';
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                    }, 5000);
+                } else {
+                    // Show error message
+                    alert('Error: ' + (data.message || 'Something went wrong. Please try again.'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // More detailed error messaging
+                if (error.message.includes('Failed to fetch')) {
+                    alert('Unable to connect to the server. Please ensure the PHP file is in the same directory and the server is running.');
+                } else if (error.message.includes('HTTP error')) {
+                    alert('Server error. Please check that PHP is properly configured on your server.');
+                } else {
+                    alert('Unable to submit. Error: ' + error.message);
+                }
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            }
+        });
+    </script>
+</body>
+</html>
